@@ -156,8 +156,8 @@ of screenshots, commands committed to Git, and published configuration examples.
    create the application.
 3. Wait for the application to become **Running** and its Gateway to come online.
 4. Open its chat interface and verify the selected model.
-5. If browser pairing is requested, inspect and approve the exact pending device
-   request through the administrator's pairing controls.
+5. Open chat directly through the board IP. The default LAN configuration does
+   not require browser-device pairing.
 
 The test instance ID is `openclaw-rk3576-demo`. Its gateway uses port `18789`;
 other instances can receive different ports. Prefer opening chat through the
@@ -186,11 +186,16 @@ settings. The Gateway detected and reloaded the change. The provider used
 JishuShell's default `contextWindow: 128000`; this is a client configuration
 value, not a measured context limit for the remote model.
 
-The generated template also set
-`gateway.controlUi.dangerouslyDisableDeviceAuth: true`. The tested instance
-sets it to `false` and explicitly allows the panel and Gateway browser origins.
-Keep normal device authentication enabled and use pairing when the browser
-requests it. Use your actual panel origin, including its port.
+Keep the upstream JishuShell template setting
+`gateway.controlUi.dangerouslyDisableDeviceAuth: true` for the documented
+`http://<BOARD_IP>:8090` workflow. An earlier revision of this project changed it
+to false, causing HTTP secure-context errors and device-approval loops. That
+change was incorrect for the requested upstream LAN workflow and has been reverted.
+
+The helper now restores this default while retaining the panel password and
+Gateway token. A domain, HTTPS certificate, SSH tunnel and browser-device pairing
+are not prerequisites for this trusted-LAN setup. The additional browser-device
+identity check is disabled; token and panel authentication remain enabled.
 
 ## Verify conversation and tool execution
 
@@ -221,8 +226,9 @@ The RK3576 test completed on November 12, 2026:
 | Report write and read | `demo/system-report.md` existed and matched the returned table |
 
 The conversation and report were verified through the authenticated Gateway
-chat-completions endpoint and the saved workspace file. Browser rendering and
-first-device pairing were not part of this verification. Existing Frigate,
+chat-completions endpoint and the saved workspace file. Visual browser rendering was not part of this verification. A subsequent
+regression check verified an authenticated browser-mode WebSocket handshake
+over the plain HTTP LAN IP without device identity or pairing. Existing Frigate,
 Home Assistant, and FUXA containers remained running during the installation.
 
 ## Maintenance and troubleshooting
@@ -243,8 +249,8 @@ jishushell doctor
   and LAN provider selection. A successful direct API request does not prove
   the agent's configured proxy path works.
 - **Container runs but chat is unavailable:** wait for Gateway startup and
-  inspect its logs. Complete browser pairing if requested; keep authentication
-  enabled.
+  inspect its logs. For the documented HTTP-IP setup, rerun the configuration
+  helper to restore the upstream LAN default; retain panel and token authentication.
 - **Disk nearly full:** plan additional storage before upgrades. Remove only
   specifically approved unused artifacts; avoid broad Docker pruning.
 

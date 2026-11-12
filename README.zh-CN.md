@@ -42,8 +42,8 @@ http://<BOARD_IP>:8090
    并设为默认。
 3. 点击 **Install Application → OpenClaw**，填写名称并创建应用。
 4. 按下文应用实测运行配置。
-5. 等待 **Running** 和 Gateway 在线，进入聊天；出现设备配对请求时，
-   由管理员核对并批准对应请求。
+5. 等待 **Running** 和 Gateway 在线，直接通过开发板 IP 地址进入聊天。
+   默认局域网配置无需浏览器设备配对。
 
 DeepSeek 官方服务使用对应的提供商。JishuShell 0.8.7 接入有认证的内网
 OpenAI 兼容网关时，实测使用本地 **vLLM** 提供商选项，填写网关的真实
@@ -60,10 +60,15 @@ python3 scripts/configure-openclaw.py \
   --panel-origin "http://<BOARD_IP>:8090"
 ```
 
-该脚本使用受支持的 **safeguard** 压缩模式，解决实测 2026.6.11 的自动压缩报错，
-并开启正常的浏览器设备认证、合并允许的面板来源。原模型配置和凭据保留，
-旧配置在旁边以权限 600 备份。可加 `--dry-run` 预览；Gateway 会重新加载配置。
-脚本不会自动批准配对，也不会设置管理员密码。
+该脚本使用受支持的 **safeguard** 压缩模式解决实测 2026.6.11 的自动压缩报错，
+并恢复 JishuShell 默认的 HTTP 局域网访问配置：
+`gateway.controlUi.dangerouslyDisableDeviceAuth: true`。
+脚本合并面板来源地址，保留模型配置和凭据，并以权限 600 备份旧配置。
+可加 `--dry-run` 预览；Gateway 会重新加载配置。
+
+直接用浏览器打开开发板 IP 地址即可，无需域名、HTTPS 证书、SSH 隧道或
+浏览器设备审批。面板密码和 Gateway Token 认证仍然保留；与上游模板一致，
+此配置关闭额外的浏览器设备身份校验，适用于可信局域网。脚本不会设置或修改密码。
 
 ## 在聊天中生成报告
 

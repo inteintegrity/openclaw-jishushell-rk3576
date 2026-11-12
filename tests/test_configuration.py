@@ -18,7 +18,7 @@ class ConfigurationSafetyTests(unittest.TestCase):
         self.path = Path(self.temp.name) / "openclaw.json"
         self.original = {
             "gateway": {"auth": {"token": "test-only-token"},
-                        "controlUi": {"allowedOrigins": ["http://localhost:8090"]}},
+                        "controlUi": {"dangerouslyDisableDeviceAuth": False, "allowedOrigins": ["http://localhost:8090"]}},
             "models": {"providers": {"example": {"apiKey": "test-only-key"}}},
             "agents": {"defaults": {"model": "example/model", "compaction": {"reserveTokens": 1000}}},
         }
@@ -28,6 +28,7 @@ class ConfigurationSafetyTests(unittest.TestCase):
         module.configure(self.path, ["http://board.example:8090"])
         current = json.loads(self.path.read_text())
         self.assertEqual(current["models"], self.original["models"])
+        self.assertIs(current["gateway"]["controlUi"]["dangerouslyDisableDeviceAuth"], True)
         self.assertEqual(current["gateway"]["auth"], self.original["gateway"]["auth"])
         self.assertEqual(current["agents"]["defaults"]["model"], "example/model")
         self.assertEqual(current["agents"]["defaults"]["compaction"]["reserveTokens"], 1000)

@@ -13,7 +13,8 @@ Date: 2026-11-12. Hardware: Seeed reComputer RK3576 devkit, 8 GB RAM.
 - Authenticated Gateway chat returned RK_OPENCLAW_OK.
 - Agent executed uname -m, node --version and pwd, wrote demo/system-report.md,
   and read it back. The transcript contained exec, write and read tool calls.
-- Normal browser device authentication was enabled in the instance configuration.
+- Default JishuShell HTTP LAN access was restored after an incorrect project
+  adjustment enabled extra browser-device authentication.
 - Existing Frigate, Home Assistant and FUXA containers remained running.
 
 The configured remote gateway exposed the operator-supplied model ID
@@ -77,3 +78,14 @@ Gateway endpoint and inspected the saved file and transcript.
 
 Upstream software and network conditions may change; this record concerns the
 versions above.
+
+## HTTP LAN access correction
+
+An earlier helper revision set dangerouslyDisableDeviceAuth=false, contrary to
+the upstream JishuShell template and EDATEC HTTP-IP workflow. This caused browser
+secure-context and pairing failures. The helper and RK configuration now restore
+the upstream default true, preserving panel password and Gateway token checks.
+
+Verified on the RK: HTTP WebSocket upgrade 101 through the panel IP/port and
+authenticated protocol-4 browser-mode hello-ok without any device identity or
+pairing. This tests the actual WebSocket connection, not merely an HTTP 200 page.

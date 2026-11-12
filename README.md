@@ -44,8 +44,8 @@ http://<BOARD_IP>:8090
    as default.
 3. Select **Install Application → OpenClaw**, enter a name and create it.
 4. Apply the tested runtime settings below.
-5. Wait for **Running** and an online Gateway, then open chat. Inspect and approve
-   the exact browser device pairing request if prompted.
+5. Wait for **Running** and an online Gateway, then open chat directly at the board
+   IP address. The default LAN setup does not require browser device pairing.
 
 For the public DeepSeek API, choose its corresponding provider. An authenticated
 private-LAN OpenAI-compatible gateway in JishuShell 0.8.7 can use the local
@@ -64,14 +64,17 @@ python3 scripts/configure-openclaw.py \
   --panel-origin "http://<BOARD_IP>:8090"
 ```
 
-This sets supported **safeguard compaction** to resolve the observed 2026.6.11
-automatic-compaction failure, and keeps normal browser device authentication
-enabled. It merges the supplied browser origin, preserves model settings and
-credentials, and creates a private backup beside the configuration. Use
-`--dry-run` to preview. The Gateway reloads configuration changes.
+This selects supported **safeguard compaction** to resolve the observed 2026.6.11
+automatic-compaction failure and restores JishuShell's default HTTP LAN access
+with `gateway.controlUi.dangerouslyDisableDeviceAuth: true`. It merges the panel
+origin, preserves model credentials, and creates a private configuration backup.
+Use `--dry-run` to preview; the Gateway reloads changes.
 
-The upstream template initially skips browser device authentication; the helper
-above restores it. It does not approve devices or change administrator passwords.
+Open the board IP directly in your browser. No domain, HTTPS certificate, SSH
+tunnel or browser-device approval is required for this default LAN workflow.
+The panel password and Gateway token remain required. Device identity checks are
+disabled, as in the upstream JishuShell template; use this setup on a trusted LAN.
+The helper does not set or change passwords.
 
 ## Run a real tool task
 

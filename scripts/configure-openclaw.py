@@ -22,7 +22,7 @@ def configure(config_path, origins=(), dry_run=False):
         "compaction", {}
     )["mode"] = "safeguard"
     ui = updated.setdefault("gateway", {}).setdefault("controlUi", {})
-    ui["dangerouslyDisableDeviceAuth"] = False
+    ui["dangerouslyDisableDeviceAuth"] = True
     if origins:
         if not isinstance(ui.get("allowedOrigins", []), list):
             raise ValueError("Existing allowedOrigins must be a list.")
@@ -40,7 +40,7 @@ def configure(config_path, origins=(), dry_run=False):
     if updated == original:
         return "Already configured; no changes."
     if dry_run:
-        return "Would set safeguard compaction, enable device authentication, and merge supplied origins."
+        return "Would set safeguard compaction, restore JishuShell default HTTP LAN access, and merge supplied origins."
     stamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     backup = path.with_name(path.name + ".before-rk-setup-" + stamp)
     # Create the backup with restrictive permissions before copying any secrets.
