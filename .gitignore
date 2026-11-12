@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+*.env
+*.tar
+*.tar.gz
+*.zip
+*password*
+*credentials*
+openclaw.json
+*.before-rk-setup-*
